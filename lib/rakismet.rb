@@ -21,7 +21,7 @@ module Rakismet
       def validate_key
         validate_constants
         akismet = URI.parse(verify_url)
-        _, valid = Net::HTTP.start(akismet.host) do |http|
+        _, valid = Net::HTTP::Proxy((Rakismet::PROXY_HOST, Rakismet::PROXY_PORT).start(akismet.host) do |http|
           data = "key=#{Rakismet::KEY}&blog=#{Rakismet::URL}"
           http.post(akismet.path, data, Rakismet::HEADERS)
         end
@@ -36,7 +36,7 @@ module Rakismet
         validate_constants
         args.merge!(:blog => Rakismet::URL)
         akismet = URI.parse(call_url(function))
-        _, response = Net::HTTP.start(akismet.host) do |http|
+        _, response = Net::HTTP::Proxy(Rakismet::PROXY_HOST, Rakismet::PROXY_PORT).start(akismet.host) do |http|
           data = args.map { |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
           http.post(akismet.path, data, Rakismet::HEADERS)
         end
@@ -44,7 +44,7 @@ module Rakismet
       end
       
       protected
-        
+              
         def verify_url
           "http://#{Rakismet::HOST}/1.1/verify-key"
         end
