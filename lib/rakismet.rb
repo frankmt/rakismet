@@ -21,7 +21,7 @@ module Rakismet
       def validate_key
         validate_constants
         akismet = URI.parse(verify_url)
-        _, valid = Net::HTTP::Proxy((Rakismet::PROXY_HOST, Rakismet::PROXY_PORT).start(akismet.host) do |http|
+        _, valid = Net::HTTP::Proxy(Rakismet::PROXY_HOST, Rakismet::PROXY_PORT).start(akismet.host) do |http|
           data = "key=#{Rakismet::KEY}&blog=#{Rakismet::URL}"
           http.post(akismet.path, data, Rakismet::HEADERS)
         end
